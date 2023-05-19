@@ -3,9 +3,11 @@ package nascimento.moraes.esther.galeria;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -33,7 +35,7 @@ public class PhotoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_photo);
         Intent i = getIntent();
         photoPath = i.getStringExtra("photo_path");
-        Bitmap bitmap = Utils.getBitmap(photoPath);
+        Bitmap bitmap = Util.getBitmap(photoPath);
         ImageView imPhoto = findViewById(R.id.imPhoto);
         imPhoto.setImageBitmap(bitmap);
     }
@@ -56,4 +58,14 @@ public class PhotoActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    void sharePhoto() {
+        // Codigo para cpmpartiilhar a foto
+        Uri photoUri = FileProvider.getUriForFile(PhotoActivity.this, "nascimento.moraes.esther.fileprovider", new File(photoPath));
+        Intent i = new Intent(Intent.ACTION_SEND);
+        i.putExtra(Intent.EXTRA_STREAM, photoUri);
+        i.setType("image/jpeg");
+        startActivity(i);
+    }
+
 }
