@@ -5,6 +5,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -33,18 +35,41 @@ public class MainActivity extends AppCompatActivity {
     static int RESULT_TAKE_PICTURE = 1;
     String currentPhotoPath;
     static int RESULT_REQUEST_PERMISSION = 2;
-
+    List<String> photos;
+    MainAdapter mainAdapter;
+    public MainActivity(){
+        photos = new ArrayList<>();
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        File dir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File[] files = dir.listFiles();
 
-        Toolbar toolbar = findViewById(R.id.tbMain);
-        setSupportActionBar(toolbar);
+        for (int i = 0; i < files.length; i++) {
+            photos.add(files[i].getAbsolutePath());
+            Toolbar toolbar = findViewById(R.id.tbMain);
+            setSupportActionBar(toolbar);
+        }
 
-        List<String> permissions = new ArrayList<>();
+        MainAdapter mainAdapter = new MainAdapter(MainActivity.this, photos);
+        RecyclerView rvGallery = findViewById(R.id.rvGallery);
+        rvGallery.setAdapter(mainAdapter);
+        float w = getResources().getDimension(R.dimen.itemWidth);
+        int numberOfColumns = Utils.calculateNoOfColumns(MainActivity.this, w);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(MainActivity.this, numberOfColumns);
+        rvGallery.setLayoutManager(gridLayoutManager);
+        List permissions = new ArrayList<>();
         permissions.add(Manifest.permission.CAMERA);
         checkForPermissions(permissions);
+
+    }
+
+    public void startPhotoActivity(String photoPath) {
+        Intent i = new Intent(MainActivity.this, PhotoActivity.class);
+        i.putExtra("photo_path", photoPath);
+        startActivity(i);
     }
 
     @Override
@@ -64,12 +89,6 @@ public class MainActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    public void startPhotoActivity(String photoPath) {
-        Intent i = new Intent(MainActivity.this, PhotoActivity.class);
-        i.putExtra("photo_path", photoPath);
-        startActivity(i);
     }
 
     private void dispatchTakePictureIntent() {
@@ -148,14 +167,14 @@ public class MainActivity extends AppCompatActivity {
         }
         if(permissionsRejected.size() > 0) {
            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-             if(shouldShowRequestPermissionRationale(permissionsRejected.get(0))) {
+               if(shouldShowRequestPermissionRationale(permissionsRejected.get(0))) {
                  new AlertDialog.Builder(MainActivity.this).setMessage("Para usar essa app é preciso conceder essas permissões").setPositiveButton("OK", new DialogInterface.OnClickListener() {
                      @Override
                      public void onClick(DialogInterface dialog, int which) {
                          requestPermissions(permissionsRejected.toArray(new String[permissionsRejected.size()]), RESULT_REQUEST_PERMISSION);
                      }
                  }).create().show();
-             }
+               }
            }
         }
     }

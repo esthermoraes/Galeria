@@ -15,8 +15,11 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.Toolbar;
 
+import java.io.File;
+
 public class PhotoActivity extends AppCompatActivity {
 
+    String photoPath;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,15 +30,10 @@ public class PhotoActivity extends AppCompatActivity {
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-    }
-    String photoPath;
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_photo);
+
         Intent i = getIntent();
         photoPath = i.getStringExtra("photo_path");
-        Bitmap bitmap = Util.getBitmap(photoPath);
+        Bitmap bitmap = Utils.getBitmap(photoPath);
         ImageView imPhoto = findViewById(R.id.imPhoto);
         imPhoto.setImageBitmap(bitmap);
     }
