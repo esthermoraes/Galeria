@@ -23,7 +23,7 @@
             <meta-data android:name="android.support.PARENT_ACTIVITY" android:value=".MainActivity"/>
         </activity>
         <provider
-            android:authorities="trindade.daniel.galeria.fileprovider"
+            android:authorities="nascimento.moraes.esther.fileprovider"
             android:name="androidx.core.content.FileProvider"
             android:exported="false"
             android:grantUriPermissions="true">

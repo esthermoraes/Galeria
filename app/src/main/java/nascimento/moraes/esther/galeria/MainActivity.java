@@ -36,25 +36,22 @@ public class MainActivity extends AppCompatActivity {
     static int RESULT_TAKE_PICTURE = 1;
     String currentPhotoPath;
     static int RESULT_REQUEST_PERMISSION = 2;
-    List<String> photos;
+    List<String> photos = new ArrayList<>();
     MainAdapter mainAdapter;
-    public MainActivity(){
-        photos = new ArrayList<>();
-    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Toolbar toolbar = findViewById(R.id.tbMain);
+        setSupportActionBar(toolbar);
         File dir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File[] files = dir.listFiles();
 
         for (int i = 0; i < files.length; i++) {
             photos.add(files[i].getAbsolutePath());
-            Toolbar toolbar = findViewById(R.id.tbMain);
-            setSupportActionBar(toolbar);
         }
 
-        MainAdapter mainAdapter = new MainAdapter(MainActivity.this, photos);
+        mainAdapter = new MainAdapter(MainActivity.this, photos);
         RecyclerView rvGallery = findViewById(R.id.rvGallery);
         rvGallery.setAdapter(mainAdapter);
         float w = getResources().getDimension(R.dimen.itemWidth);
@@ -64,7 +61,6 @@ public class MainActivity extends AppCompatActivity {
         List permissions = new ArrayList<>();
         permissions.add(Manifest.permission.CAMERA);
         checkForPermissions(permissions);
-
     }
 
     public void startPhotoActivity(String photoPath) {
